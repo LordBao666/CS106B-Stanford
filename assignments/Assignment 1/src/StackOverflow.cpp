@@ -3,10 +3,12 @@
  * Q1: What do you see when you trigger a stack overflow when running the program
  *     without the debugger enabled? Write your answer below.
  *
- *
+ * A1: The program just directly crashed.
  *
  * Q2: What is the sequence of values that repeats in the stack overflow? Write your
  *     answer below.
+ *
+ * A2: 137 164 685 203 327 549 137
  */
 #include "StackOverflow.h"
 
