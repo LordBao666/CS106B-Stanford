@@ -4,19 +4,43 @@
  *
  * TODO: Edit these comments to leave a puzzle for your section leader to solve!
  */
+#include <cctype>
+#include <string>
+#include <strlib.h>
 #include "OnlyConnect.h"
 #include "GUI/SimpleTest.h"
 using namespace std;
 
+/**
+ * Suppose ch is an English letter, i.e a letter between 'a' and 'z'
+ * or between 'A' and  'Z', return true if it is a  consonant,otherwise
+ * return false.
+ */
+bool isEnglishLetterConsonant(char ch);
+
 string onlyConnectize(string phrase) {
-    /* TODO: The next few lines just exist to make sure you don't get compiler warning messages
-     * when this function isn't implemented. Delete these lines, then implement this function.
-     */
-    (void) phrase;
-    return "";
+    int size = phrase.size();
+    if(size==0){
+        return string("");
+    }
+
+    string substr = phrase.substr(1);
+    //if phrase[0] is a consonant
+    if(isalpha(phrase[0]) && isEnglishLetterConsonant(phrase[0])){
+        return charToString(toupper(phrase[0]))+onlyConnectize(substr);
+    }else{
+        return onlyConnectize(substr);
+    }
 }
 
-
+bool isEnglishLetterConsonant(char ch){
+    ch=tolower(ch);
+    if(ch=='a' || ch=='e' || ch=='i' ||
+       ch=='o' || ch=='u' ){
+        return false;
+    }
+    return true;
+}
 
 
 
@@ -54,8 +78,15 @@ PROVIDED_TEST("Handles single-character inputs.") {
  * Happy testing!
  */
 
+STUDENT_TEST("Handles special characters."){
+    EXPECT_EQUAL(onlyConnectize("*!.,:---,....."), "");
+    EXPECT_EQUAL(onlyConnectize("+;234.1.323JOoj"), "JJ");
+}
 
+STUDENT_TEST("Handles empty string"){
+    EXPECT_EQUAL(onlyConnectize(""), "");
 
+}
 
 
 
