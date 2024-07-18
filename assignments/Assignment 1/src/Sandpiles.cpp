@@ -6,11 +6,19 @@
 #include "GUI/SimpleTest.h"
 using namespace std;
 
+#define SAND_FULL 4
+#define SAND_EMPTY 0
 void dropSandOn(Grid<int>& world, int row, int col) {
-    /* TODO: Delete this line and the three after it, then implement this function. */
-    (void) world;
-    (void) row;
-    (void) col;
+    if(world.inBounds(row,col)){
+        world[row][col]++;
+        if(world[row][col]==SAND_FULL){
+            world[row][col]=SAND_EMPTY;
+            dropSandOn(world,row-1,col);
+            dropSandOn(world,row,col+1);
+            dropSandOn(world,row+1,col);
+            dropSandOn(world,row,col-1);
+        }
+    }
 }
 
 
@@ -86,8 +94,47 @@ PROVIDED_TEST("Two topples chain.") {
  * Happy testing!
  */
 
+STUDENT_TEST("The Demo from the coursesite") {
+    /* Create a simple source grid. */
+    Grid<int> before = {
+        { 0, 0, 0, 0, 0},
+        { 0, 0, 3, 0, 0},
+        { 0, 3, 3, 3, 0},
+        { 0, 0, 3, 0, 0},
+        { 0, 0, 0, 0, 0}
+    };
+    Grid<int> after = {
+        { 0, 0, 1, 0, 0},
+        { 0, 2, 1, 2, 0},
+        { 1, 1, 0, 1, 1},
+        { 0, 2, 1, 2, 0},
+        { 0, 0, 1, 0, 0}
+    };
 
+    dropSandOn(before, 2, 2);
+    EXPECT_EQUAL(before, after); // The above call changes 'before.'
+}
 
+STUDENT_TEST("Another Demo from the coursesite") {
+    /* Create a simple source grid. */
+    Grid<int> before = {
+        { 3, 3, 0, 0, 0},
+        { 3, 0, 0, 0, 0},
+        { 0, 0, 0, 0, 0},
+        { 0, 0, 0, 0, 0},
+        { 0, 0, 0, 0, 0}
+    };
+    Grid<int> after = {
+        { 2, 0, 1, 0, 0},
+        { 0, 2, 0, 0, 0},
+        { 1, 0, 0, 0, 0},
+        { 0, 0, 0, 0, 0},
+        { 0, 0, 0, 0, 0}
+    };
+
+    dropSandOn(before, 0, 0);
+    EXPECT_EQUAL(before, after); // The above call changes 'before.'
+}
 
 
 

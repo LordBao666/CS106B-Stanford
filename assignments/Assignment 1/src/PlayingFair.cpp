@@ -8,15 +8,27 @@
 using namespace std;
 
 string aSequenceOfOrder(int n) {
-    /* TODO: Delete this line and the next two lines, then implement this function. */
-    (void) n;
-    return "";
+    if(n<0){
+        error("n CANNOT BE NEGATIVE");
+    }
+
+    if(n==0){
+        return string("A");
+    }else{
+        return aSequenceOfOrder(n-1)+bSequenceOfOrder(n-1);
+    }
 }
 
 string bSequenceOfOrder(int n) {
-    /* TODO: Delete this line and the next two lines, then implement this function. */
-    (void) n;
-    return "";
+    if(n<0){
+        error("n CANNOT BE NEGATIVE");
+    }
+
+    if(n==0){
+        return string("B");
+    }else{
+        return bSequenceOfOrder(n-1)+aSequenceOfOrder(n-1);
+    }
 }
 
 
@@ -77,8 +89,15 @@ PROVIDED_TEST("Triggers error on negative inputs.") {
  * Happy testing!
  */
 
+STUDENT_TEST("Test Base Case when order equals 0"){
+    EXPECT_EQUAL(aSequenceOfOrder(0),"A");
+    EXPECT_EQUAL(bSequenceOfOrder(0),"B");
+}
 
-
+STUDENT_TEST("order can not be -1"){
+    EXPECT_ERROR(aSequenceOfOrder(-1));
+    EXPECT_ERROR(bSequenceOfOrder(-1));
+}
 
 
 
