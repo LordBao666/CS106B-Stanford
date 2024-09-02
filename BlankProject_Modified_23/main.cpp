@@ -15,7 +15,7 @@ STUDENT_TEST("Test"){
 
 int main()
 {
-    if(ALL_TESTS){
+    if(runSimpleTests(ALL_TESTS)){
         cout<<"test cases passed"<<endl;
     }
     return 0;
