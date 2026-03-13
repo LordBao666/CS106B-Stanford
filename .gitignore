@@ -1,6 +1,7 @@
 # my own setting
 *.exe
 build
+.qtcreator
 
 
 
