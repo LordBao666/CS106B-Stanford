@@ -12,11 +12,37 @@
 
 #include "testing/SimpleTest.h"
 #include "lexicon.h"
+#include "set.h"
 #include <string>
 using namespace std;
 
 string mostXzibitWord(const Lexicon& words) {
-    return "";
+
+    string ans;
+    int maxCount=0;
+
+    for(string word:words){
+
+        Lexicon curLex;//记录对于word满足题目条件的所有子串.curLex自带去重功能
+
+        //遍历所有子串
+        for(int startPos =0; startPos<word.size();startPos++){
+            for(int endPos = startPos;endPos<word.size();endPos++){
+                int len = endPos-startPos+1;
+                string subStr =word.substr(startPos,len);
+                if(words.contains(subStr)){
+                    curLex.add(subStr);
+                }
+            }
+        }
+        if(curLex.size()>maxCount){
+            maxCount = curLex.size();
+            ans = word;
+        }
+
+
+    }
+    return ans;
 }
 
 /* * * * * Provided Tests Below This Point * * * * */

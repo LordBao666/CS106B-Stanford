@@ -1,0 +1,3 @@
+apple banana cat dog 
+orange strawberry fly bee
+blue red

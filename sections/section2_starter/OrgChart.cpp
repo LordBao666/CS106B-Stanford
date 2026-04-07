@@ -15,13 +15,17 @@
 #include <string>
 using namespace std;
 
+string ceoOf(string person, const Map<string, string>& bosses) {
+    while (bosses.containsKey(person)) {
+        person = bosses[person];
+    }
+    return person;
+}
+
 bool areAtSameCompany(const string& p1,
                       const string& p2,
                       const Map<string, string>& bosses) {
-    (void) p1;
-    (void) p2;
-    (void) bosses;
-    return false;
+    return ceoOf(p1, bosses) == ceoOf(p2, bosses);
 }
 
 /* * * * * Provided Tests Below This Point * * * * */
