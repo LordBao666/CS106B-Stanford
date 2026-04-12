@@ -3,16 +3,144 @@
 #include "queue.h"
 using namespace std;
 
+/*
+这道题用DFS和BFS都可以.测试案例都能过.但是在执行大型图的时候,DFS会栈溢出.BFS 和 DFS的空间复杂度
+都是O(n^2)
+*/
+
+/* 解决方案1 DFS 测试案例可以通过,但是在执行大型图的时候仍然会栈溢出导致程序终止 */
+
+// #define UNKNOWEN -1
+// #define FLOODED 1
+// #define NOT_FLOODED 0
+
+// //用于探索上下左右的辅助数组
+// const int directionsHelp[5]={-1,0,1,0,-1};
+
+// void dfs(const Grid<double>& terrain,const GridLocation & source,double height,Grid< int > & isFlooded){
+//     int sourceRow = source.row;
+//     int sourceCol = source.col;
+
+//     //此水位已经探索过
+//     if(isFlooded[sourceRow][sourceCol]!=UNKNOWEN){
+//         return;
+//     }
+
+//     isFlooded[sourceRow][sourceCol]= terrain[sourceRow][sourceCol]<=height?FLOODED:NOT_FLOODED;
+
+//     //只有它被淹没,才有向四方扩展的必要性
+//     if(isFlooded[sourceRow][sourceCol]==FLOODED){
+//         int boundRow =terrain.numRows();
+//         int boundCol = terrain.numCols();
+
+//         //分别是上 右 下 左
+//         for(int i=0;i<4;i++){
+//             int nextRow = sourceRow + directionsHelp[i];
+//             int nextCol = sourceCol + directionsHelp[i+1];
+
+
+//             //(nextRow,nextCol)合法
+//             if(0<= nextRow && nextRow<boundRow && 0<= nextCol && nextCol<boundCol){
+//                 GridLocation loc = {nextRow,nextCol};
+//                 dfs(terrain,loc,height,isFlooded);
+//             }
+//         }
+//     }
+
+
+// }
+
+
+// Grid<bool> floodedRegionsIn(const Grid<double>& terrain,
+//                             const Vector<GridLocation>& sources,
+//                             double height) {
+//     int rows = terrain.numRows();
+//     int cols = terrain.numCols();
+//     //isFlood设置类型为int,-1表示不知道,1表示会淹没,0表示不会淹没
+//     Grid< int >  isFlooded ( rows ,  cols );
+//     for(int i=0;i<rows;i++){
+//         for(int j=0;j<cols;j++){
+//             isFlooded[i][j]=UNKNOWEN;//初始化均为-1,表示不知道
+//         }
+//     }
+
+//     for(GridLocation  loc: sources){
+//         dfs(terrain,loc,height,isFlooded);
+//     }
+
+//     Grid< bool >  ans ( rows ,  cols );
+//     for(int i=0;i<rows;i++){
+//         for(int j=0;j<cols;j++){
+//             ans[i][j]=isFlooded[i][j]==FLOODED;//仅当FlOODED为true,其他UNKONWEN或NOT_FLOODED为false
+//         }
+//     }
+//     return ans;
+// }
+
+
+/* 解决方案2 BFS */
+
+#define UNKNOWEN -1
+#define FLOODED 1
+#define NOT_FLOODED 0
+
+//用于探索上下左右的辅助数组
+const int directionsHelp[5]={-1,0,1,0,-1};
+
+
 Grid<bool> floodedRegionsIn(const Grid<double>& terrain,
                             const Vector<GridLocation>& sources,
                             double height) {
-    /* TODO: Delete this line and the next four lines, then implement this function. */
-    (void) terrain;
-    (void) sources;
-    (void) height;
-    return {};
-}
+    int rows = terrain.numRows();
+    int cols = terrain.numCols();
+    //isFlood设置类型为int,-1表示不知道,1表示会淹没,0表示不会淹没
+    Grid< int >  isFlooded ( rows ,  cols );
+    for(int i=0;i<rows;i++){
+        for(int j=0;j<cols;j++){
+            isFlooded[i][j]=UNKNOWEN;//初始化均为-1,表示不知道
+        }
+    }
 
+    //入队
+    Queue< GridLocation >  queue ;
+    for(GridLocation  loc: sources){
+        queue.enqueue(loc);
+    }
+
+    while(!queue.isEmpty()){
+        GridLocation  loc = queue.dequeue();
+        int curRow = loc.row;
+        int curCol = loc.col;
+        //该位置没有探索过
+        if(isFlooded[curRow][curCol]==UNKNOWEN){
+            isFlooded[curRow][curCol]= terrain[curRow][curCol]<=height?FLOODED:NOT_FLOODED;
+
+            //只有它被淹没,才有向四方扩展的必要性
+            if(isFlooded[curRow][curCol]==FLOODED){
+                //分别是上 右 下 左
+                for(int i=0;i<4;i++){
+                    int nextRow = curRow + directionsHelp[i];
+                    int nextCol = curCol + directionsHelp[i+1];
+
+                    //(nextRow,nextCol)合法 且 未知
+                    if(0<= nextRow && nextRow<rows && 0<= nextCol && nextCol<cols &&
+                        isFlooded[nextRow][nextCol]==UNKNOWEN){
+                        GridLocation loc = {nextRow,nextCol};
+                        queue.enqueue(loc);
+                    }
+                }
+            }
+        }
+    }
+
+    Grid< bool >  ans ( rows ,  cols );
+    for(int i=0;i<rows;i++){
+        for(int j=0;j<cols;j++){
+            ans[i][j]=isFlooded[i][j]==FLOODED;//仅当FlOODED为true,其他UNKONWEN或NOT_FLOODED为false
+        }
+    }
+    return ans;
+}
 
 /***** Test Cases Below This Point *****/
 PROVIDED_TEST("Nothing gets wet if there are no water sources.") {
