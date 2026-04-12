@@ -1,16 +1,16 @@
 My tool says that the language of...
 
-... Passage  1 is ____,
-... Passage  2 is ____,
-... Passage  3 is ____,
-... Passage  4 is ____,
-... Passage  5 is ____,
-... Passage  6 is ____,
-... Passage  7 is ____,
-... Passage  8 is ____,
-... Passage  9 is ____,
-... Passage 10 is ____,
-... Passage 11 is ____,
-... Passage 12 is ____,
-... Passage 13 is ____, and
-... Passage 14 is ____.
+... Passage 1 is Mongolian,
+... Passage 2 is Korean,
+... Passage 3 is Hawaiian,
+... Passage 4 is Swahili,
+... Passage 5 is Chinese,
+... Passage 6 is Georgian,
+... Passage 7 is Cherokee,
+... Passage 8 is Arabic,
+... Passage 9 is Twi,
+... Passage 10 is Punjabi,
+... Passage 11 is English,
+... Passage 12 is Hausa,
+... Passage 13 is Latvian, and
+... Passage 14 is Ibibio.

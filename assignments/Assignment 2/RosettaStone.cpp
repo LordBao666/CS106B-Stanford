@@ -1,50 +1,140 @@
 #include "RosettaStone.h"
 #include "GUI/SimpleTest.h"
+#include "cmath"
+#include "priorityqueue.h"
+#include "vector.h"
 using namespace std;
 
 Map<string, double> kGramsIn(const string& str, int kGramLength) {
     /* TODO: Delete this comment and the other lines here, then implement
      * this function.
      */
-    (void) str;
-    (void) kGramLength;
-    return {};
+    if(kGramLength<=0){
+        error("kGramLength must be positive");
+    }
+
+    int strSize = str.size();//字符串的字节长度.比如"我"这种中文单词存储的字节不止一个.
+    if(strSize<kGramLength){
+        return {};
+    }
+
+
+
+    string kStr;
+    for(int i=0;i<kGramLength;i++){
+        kStr+=str[i];
+    }
+    Map<string, double> map;
+    map[kStr]++;
+    for(int i=kGramLength;i<strSize;i++){
+        kStr = kStr.substr(1) + str[i];
+        map[kStr]++;
+    }
+
+    return map;
 }
 
 Map<string, double> normalize(const Map<string, double>& input) {
-    /* TODO: Delete this comment and the other lines here, then implement
-     * this function.
-     */
-    (void) input;
-    return {};
+    double sumOfSquares = 0;
+    for(double value : input.values()){
+        sumOfSquares+=value * value;
+    }
+    //如果下列条件为true,代表所有map[key]都是0,这是一种非法情况
+    //根据题目要求,这里本质是为了严谨考虑
+    if(abs(sumOfSquares)<1e-3){
+        error("Illegal situations!!!");
+    }
+
+    double squareRoot = sqrt(sumOfSquares);
+    Map<string,double> ans;
+    for(string key:input.keys()){
+        ans.put(key,input.get(key) /squareRoot );//根据题目要求 正则后的数据为 val/ sqrt(所有val的平方和)
+    }
+    return ans;
 }
 
 Map<string, double> topKGramsIn(const Map<string, double>& source, int numToKeep) {
-    /* TODO: Delete this comment and the other lines here, then implement
-     * this function.
-     */
-    (void) source;
-    (void) numToKeep;
-    return {};
+    if(numToKeep<0){
+        error("numTokeep can not be negative");
+    }else if(numToKeep == 0){
+        return {};
+    }
+
+    if(source.size()<=numToKeep){
+        Map<string,double> ans = source;//复制构造函数
+        return ans;
+        //或许可以直接 return source?
+    }
+
+    //pq是小根堆
+    //为了得到k个 最大 的string,就是要建立size为k的 小根堆
+    PriorityQueue<string> pq;
+
+
+    Vector<string> keys = source.keys();
+    for(int i=0;i<numToKeep;i++){
+        pq.enqueue(keys[i],source.get(keys[i]));//放入key,value就是权重
+    }
+
+    for(int i=numToKeep;i<source.size();i++){
+        double minPriority = source.get(pq.peek());
+        double curPriority = source.get(keys[i]);
+        if(curPriority > minPriority){
+            pq.dequeue();
+            pq.enqueue(keys[i],curPriority);
+        }
+    }
+
+    Map<string,double> ans;
+    while(!pq.isEmpty()){
+        string key = pq.dequeue();
+        double val = source.get(key);
+        ans.put(key,val);
+    }
+    return ans;
+
 }
 
 double cosineSimilarityOf(const Map<string, double>& lhs, const Map<string, double>& rhs) {
-    /* TODO: Delete this comment and the other lines here, then implement
-     * this function.
-     */
-    (void) lhs;
-    (void) rhs;
-    return {};
+    //smallMap bigMap 分别表示lhs 和 rhs 中size较小 和 较大的map
+    //对smallMap进行遍历,效率更高
+    const Map<string, double> * smallMap;
+    const Map<string, double> * bigMap;
+    if(lhs.size()<rhs.size()){
+        smallMap = &lhs;
+        bigMap = &rhs;
+    }else{
+        smallMap = &rhs;
+        bigMap = &lhs;
+    }
+
+    double cosineSimilarity=0;
+    for(string key : smallMap->keys()){
+        if(bigMap->containsKey(key)){
+            cosineSimilarity+= smallMap->get(key) * bigMap->get(key);
+        }
+    }
+
+    return cosineSimilarity;
 }
 
 string guessLanguageOf(const Map<string, double>& textProfile,
                        const Set<Corpus>& corpora) {
-    /* TODO: Delete this comment and the other lines here, then implement
-     * this function.
-     */
-    (void) textProfile;
-    (void) corpora;
-    return "";
+    if(corpora.size()==0){
+        error("There must be at least one language");
+    }
+    string bestGuess;
+    double highestCosineSimilarity=0;
+    for(Corpus lang : corpora){
+        double curCosineSimilarity=cosineSimilarityOf(textProfile,lang.profile);
+        if(curCosineSimilarity>highestCosineSimilarity){
+            bestGuess=lang.name;
+            highestCosineSimilarity = curCosineSimilarity;
+        }
+    }
+
+
+    return bestGuess;
 }
 
 
